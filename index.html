@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculadora de Métricas de Calidad</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+
+<!---------------------------------
+     TÍTULO
+---------------------------------->
+<header class="header-main">
+  <h1>Calculadora de Métricas de Calidad</h1>
+  <p class="lead">Analiza indicadores clave de calidad del software.</p>
+</header>
+
+<!---------------------------------
+     FORMULARIO COMPLETO (ANCHO COMPLETO)
+---------------------------------->
+<section class="card form-section">
+  <h2>Datos del Proyecto</h2>
+
+  <div class="grid-inputs">
+
+    <!-- Cada input organizado en cuadrícula  -->
+    <div class="input-box">
+      <label>Nombre del Proyecto</label>
+      <small>Identificación para reporte</small>
+      <input id="projectName" type="text" placeholder="Proyecto SIGB">
+    </div>
+
+    <div class="input-box">
+      <label>KLOC</label>
+      <small>Miles de líneas de código</small>
+      <input id="kloc" type="number" value="50">
+    </div>
+
+    <div class="input-box">
+      <label>LOC Totales</label>
+      <small>Líneas de código escritas</small>
+      <input id="loc" type="number" value="50000">
+    </div>
+
+    <div class="input-box">
+      <label>Person-Months</label>
+      <small>Meses persona usados</small>
+      <input id="personMonths" type="number" value="10">
+    </div>
+
+    <div class="input-box">
+      <label>Defectos Pre-Release</label>
+      <small>Antes del lanzamiento</small>
+      <input id="defPre" type="number" value="120">
+    </div>
+
+    <div class="input-box">
+      <label>Defectos Post-Release</label>
+      <small>Después del lanzamiento</small>
+      <input id="defPost" type="number" value="18">
+    </div>
+
+    <div class="input-box">
+      <label>Total Tests</label>
+      <small>Pruebas ejecutadas</small>
+      <input id="testsTotal" type="number" value="980">
+    </div>
+
+    <div class="input-box">
+      <label>Tests Aprobados</label>
+      <small>Pruebas correctas</small>
+      <input id="testsPass" type="number" value="940">
+    </div>
+
+    <div class="input-box">
+      <label>Líneas Testeadas</label>
+      <small>Cubiertas por pruebas</small>
+      <input id="linesTested" type="number" value="36000">
+    </div>
+
+    <div class="input-box">
+      <label>Líneas Totales</label>
+      <small>Total del código</small>
+      <input id="totalLines" type="number" value="50000">
+    </div>
+
+    <div class="input-box">
+      <label>Horas de Operación</label>
+      <small>Tiempo monitoreado</small>
+      <input id="hoursOp" type="number" value="720">
+    </div>
+
+    <div class="input-box">
+      <label>Fallos</label>
+      <small>Eventos de falla</small>
+      <input id="failures" type="number" value="6">
+    </div>
+
+    <div class="input-box">
+      <label>Downtime (Horas)</label>
+      <small>Tiempo sin servicio</small>
+      <input id="downtime" type="number" value="12">
+    </div>
+
+    <div class="input-box">
+      <label>Reparaciones</label>
+      <small>Intervenciones</small>
+      <input id="repairs" type="number" value="6">
+    </div>
+
+    <div class="input-box">
+      <label>TP</label>
+      <small>Aciertos</small>
+      <input id="tp" type="number" value="80">
+    </div>
+
+    <div class="input-box">
+      <label>FP</label>
+      <small>Alarmas incorrectas</small>
+      <input id="fp" type="number" value="20">
+    </div>
+
+    <div class="input-box">
+      <label>FN</label>
+      <small>Defectos no detectados</small>
+      <input id="fn" type="number" value="40">
+    </div>
+
+    <div class="input-box">
+      <label>TN</label>
+      <small>Descartes correctos</small>
+      <input id="tn" type="number" value="200">
+    </div>
+
+  </div>
+
+  <button id="calcBtn" class="btn">Calcular</button>
+  <button id="resetBtn" class="btn secondary">Resetear</button>
+</section>
+
+<!---------------------------------
+     RESULTADOS (ANCHO COMPLETO)
+---------------------------------->
+<section class="card results-section">
+
+  <h2>Resultados de Calidad</h2>
+
+  <!-- Interpretación de Umbrales -->
+  <div class="threshold-box">
+    <h3>🟢 Umbrales del Semáforo</h3>
+    <table class="threshold-table">
+      <tr><th>Métrica</th><th>Bueno</th><th>Advertencia</th><th>Crítico</th></tr>
+      <tr><td>DRE</td><td>>=95%</td><td>80–94%</td><td><80%</td></tr>
+      <tr><td>Disponibilidad</td><td>>=99.5%</td><td>98–99.49%</td><td><98%</td></tr>
+      <tr><td>Cobertura</td><td>>=80%</td><td>50–79%</td><td><50%</td></tr>
+      <tr><td>F1 Score</td><td>>=70%</td><td>50–69%</td><td><50%</td></tr>
+      <tr><td>Defect Density</td><td><=0.2</td><td>0.21–0.5</td><td>>0.5</td></tr>
+    </table>
+  </div>
+
+  <!-- KPIs en horizontal, ocupando el ancho -->
+  <div id="metricsGrid" class="metrics-horizontal"></div>
+
+  <h3>📘 Resumen Ejecutivo</h3>
+  <div id="executiveReport" class="report-box"></div>
+
+  <h3>📄 Reporte Técnico</h3>
+  <pre id="technicalReport"></pre>
+
+  <h3>📈 Indicador Visual</h3>
+  <canvas id="radarChart" class="small-chart" width="200" height="200"></canvas>
+
+  <button id="pdfBtn" class="btn pdf">📄 Exportar PDF</button>
+
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>
